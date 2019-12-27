@@ -1,5 +1,7 @@
 {
     init: function(elevators, floors) {
+        
+        // Initialises the arrays represting the number of passengers waiting at each floor and the direction they are traveling.
         var upWaiting = [];
         var downWaiting = [];
 
@@ -7,19 +9,21 @@
             upWaiting.push(0);
             downWaiting.push(0);
         }
-
         var waiting = [downWaiting, upWaiting];
         
-        
+        /**
+        * Assigns the listerns to the a general elevator.
+        * @param {elevator} elevator The elevator to add the listeners too.
+        * @param {number} hub The unquie id for the elevator.
+        */
         function generalElevator(elevator, hub){
+            // When the elevator is idle goto a floor with passengers waiting.
             elevator.on("idle", function() {
-                console.log("Ele idle", hub);
-                // let's go to all the floors (or did we forget one?)
                 maxWaiting = 0;
                 floorNum = 0;
                 for (var f = 0; f < floors.length; f++){
                     waitingCount = upWaiting[f] + downWaiting[f];
-                    if (waitingCount < elevator.maxPassengerCount() * 0.8){
+                    if (waitingCount < elevator.maxPassengerCount()){
                         floorNum = f;
                         break;
                     }
@@ -33,11 +37,12 @@
                 elevator.goToFloor(floors.length - 1 - elevators.length + hub);
             });
 
+            // Goes to floor a pressed floor if nothing in pressed floor queue.
             elevator.on("floor_button_pressed", function(floorNum) {
-                // Maybe tell the elevator to go to that floor?
                 elevator.goToFloor(floorNum);
             });
 
+            // Reorders the elevator queue based on the direction the elevator is traveling. 
             elevator.on("passing_floor", function(floorNum, direction) {
                 var boolDir = direction === "up" ? 1 : 0;
                 var factDir = direction === "up" ? 1 : -1;
@@ -65,6 +70,12 @@
             });
         }
         
+        /**
+        * An array of the next destinations for the other elevators. 
+        * @param {number} hub The unquie id for the elevator.
+        * @param {number} dsts The number of next destinations from the other elevators.
+        * @return {Array.<number>}} An array ofthe next "dsts" destinations of each other elevator.
+        */
         function otherElevatorNextDst(hub, dsts){
             others_next = [];
             for (var e = 0; e < elevators.length; e++){
@@ -77,30 +88,31 @@
             return others_next;
         }
         
+        /**
+        * Assigns the listeners to the a general floor.
+        * @param {floor} floor The floor to add the listners too.
+        */
         function generalFloor(floor){
+            // Updates the waiting arrays information.
             var num = floor.floorNum();
             floor.on("up_button_pressed", function() {
-                // Maybe tell an elevator to go to this floor?
                 upWaiting[num] += 1;
             });
             
             floor.on("down_button_pressed", function() {
-                // Maybe tell an elevator to go to this floor?
                 downWaiting[num] += 1;
             });
         }
-        
+       
+        // Initialise each floor with the generalFloor listeners.
         for (var f = 0; f < floors.length; f++){
             generalFloor(floors[f]);
         }
         
+        // Initialise each floor with the generalFloor listeners.
         for (var e = 0; e < elevators.length; e++){
             generalElevator(elevators[e], e);
         }
        
-    },
-        
-    update: function(dt, elevators, floors) {
-        // We normally don't need to do anything here
     }
 }
