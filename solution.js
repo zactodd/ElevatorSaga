@@ -18,7 +18,7 @@
         */
         function generalElevator(elevator, hub){
             // When the elevator is idle goto a floor with passengers waiting.
-            elevator.on("idle", function() {
+            elevator.on('idle', function() {
                 maxWaiting = 0;
                 floorNum = 0;
                 for (var f = 0; f < floors.length; f++){
@@ -38,15 +38,15 @@
             });
 
             // Goes to floor a pressed floor if nothing in pressed floor queue.
-            elevator.on("floor_button_pressed", function(floorNum) {
+            elevator.on('floor_button_pressed', function(floorNum) {
                 elevator.goToFloor(floorNum);
             });
 
             // Reorders the elevator queue based on the direction the elevator is traveling. 
-            elevator.on("passing_floor", function(floorNum, direction) {
-                var boolDir = direction === "up" ? 1 : 0;
-                var factDir = direction === "up" ? 1 : -1;
-                var load = direction === "up" ? 1 : 0.4;
+            elevator.on('passing_floor', function(floorNum, direction) {
+                var boolDir = direction === 'up' ? 1 : 0;
+                var factDir = direction === 'up' ? 1 : -1;
+                var load = direction === 'up' ? 1 : 0.4;
                 
                 if (elevator.getPressedFloors().includes(floorNum) || (elevator.loadFactor() < (load - floorNum * 0.01) && waiting[boolDir][floorNum])){
                     
@@ -74,7 +74,7 @@
         * An array of the next destinations for the other elevators. 
         * @param {number} hub The unquie id for the elevator.
         * @param {number} dsts The number of next destinations from the other elevators.
-        * @return {Array.<number>}} An array ofthe next "dsts" destinations of each other elevator.
+        * @return {Array.<number>}} An array ofthe next 'dsts' destinations of each other elevator.
         */
         function otherElevatorNextDst(hub, dsts){
             others_next = [];
@@ -95,11 +95,11 @@
         function generalFloor(floor){
             // Updates the waiting arrays information.
             var num = floor.floorNum();
-            floor.on("up_button_pressed", function() {
+            floor.on('up_button_pressed', function() {
                 upWaiting[num] += 1;
             });
             
-            floor.on("down_button_pressed", function() {
+            floor.on('down_button_pressed', function() {
                 downWaiting[num] += 1;
             });
         }
@@ -115,7 +115,6 @@
         }
        
     },
-
     update: function(dt, elevators, floors) {
     }
 }
