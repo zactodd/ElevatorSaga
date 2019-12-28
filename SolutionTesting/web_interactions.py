@@ -1,7 +1,7 @@
 from selenium import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
 
-DRIVER = webdriver.Chrome(ChromeDriverManager.install())
+DRIVER = webdriver.Chrome(ChromeDriverManager().install())
 URL = "https://play.elevatorsaga.com/"
 LEVEL_FORMAT = "#challenge={}"
 
@@ -32,7 +32,12 @@ class Page:
         return self.browser.find_element_by_class_name("right.startstop.unselectable")
 
     def start(self):
-        self.get_start_pause_button().click()
+        if self.get_start_pause_button().text != "Pause":
+            self.get_start_pause_button().click()
+
+    def pause(self):
+        if self.get_start_pause_button().text == "Pause":
+            self.get_start_pause_button().click()
 
     def get_speed(self):
         speed_span = self.browser.find_element_by_xpath("//h3[@class='right']/span[@class='emphasis-color']")
@@ -45,6 +50,8 @@ class Page:
         for c in range(abs(difference)):
             button().click()
             self.browser.refresh()
+
+
 
 
 
