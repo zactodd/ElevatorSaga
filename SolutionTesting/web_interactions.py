@@ -1,9 +1,8 @@
 from selenium import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
-from selenium.webdriver.common.action_chains import ActionChains
 
-# ChromeDriverManager().install()
-DRIVER = webdriver.Chrome("C:\\Users\\Zac\\.wdm\\drivers\\chromedriver\\79.0.3945.36\\win32\\chromedriver.exe")
+
+DRIVER = webdriver.Chrome(ChromeDriverManager().install())
 URL = "https://play.elevatorsaga.com/"
 LEVEL_FORMAT = "#challenge={}"
 
@@ -33,6 +32,9 @@ class Page:
     def get_start_pause_button(self):
         return self.browser.find_element_by_class_name("right.startstop.unselectable")
 
+    def get_apply_button(self):
+        return self.browser.find_element_by_id("button_apply")
+
     def start(self):
         if self.get_start_pause_button().text != "Pause":
             self.get_start_pause_button().click()
@@ -54,20 +56,14 @@ class Page:
             self.browser.refresh()
 
     def insert_code(self, js_file):
-        cm = self.browser.find_element_by_class_name('CodeMirror')
-
-        action = ActionChains(self.browser)
-        action.click(cm).perform()
-
-        # TODO improve as currently is quite hacky
-        action.send_keys("\b" * 1000).perform()
-        action.click(cm).perform()
-        action.send_keys("\b" * 1000).perform()
+        code_mirror_set_js = "document.querySelector('.CodeMirror').CodeMirror.setValue(\"{}\");"
 
         with open(js_file, "r") as js:
-            file_text = "".join(js.readlines()).replace("\"", "'")
-            action.click(cm).perform()
-            action.send_keys(file_text).perform()
+            code = "".join(js.readlines()).replace("\n", "\\n")
+        self.browser.execute_script(code_mirror_set_js.format(code))
 
-p = Page()
-p.insert_code("C:\\Users\\Zac\\Documents\\GitHub\\ElevatorSaga\\solution.js")
+    def apply(self):
+        self.get_apply_button().click()
+
+
+
