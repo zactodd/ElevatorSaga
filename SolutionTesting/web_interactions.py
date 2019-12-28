@@ -40,14 +40,12 @@ class Page:
 
     def set_speed(self, speed):
         assert speed in self.speeds, "Speed not a valid speed. Valid speeds are " + str(self.speeds)
-        difference = self.speeds.index(speed) - self.speeds.index(self.speed)
+        difference = self.speeds.index(speed) - self.speeds.index(self.get_speed())
         button = self.get_up_speed_button if difference > 0 else self.get_down_speed_button
         for c in range(abs(difference)):
-            self.get_speed()
             button().click()
             self.browser.refresh()
-            print("click")
-        # self.speed = speed
+
 
 
 
