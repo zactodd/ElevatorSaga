@@ -114,5 +114,8 @@
             generalElevator(elevators[e], e);
         }
        
+    },
+
+    update: function(dt, elevators, floors) {
     }
 }
