@@ -110,6 +110,13 @@ class Page:
         """
         self.get_apply_button().click()
 
-
-
+    def get_statistics(self):
+        """
+        Get the statistics from the web page.
+        :return: A dictionary of the statistic name and its value.
+        """
+        state_container = self.browser.find_element_by_class_name("statscontainer")
+        keys = state_container.find_elements_by_class_name("key")
+        values = state_container.find_elements_by_css_selector("span[class^=\"value\"]")
+        return {k.text: v.text for k, v in zip(keys, values)}
 
