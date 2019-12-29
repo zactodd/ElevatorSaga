@@ -127,11 +127,14 @@ class Page:
             code = "".join(js.readlines()).replace("\n", "\\n")
         self.browser.execute_script(code_mirror_set_js.format(code))
 
-    def apply(self):
+    def apply(self, dont_run=True):
         """
         Applies coding changes and starts/restarts a test.
+        :param dont_run: A flag communicating if apply should and run as the page does when pressing the button.
         """
         self.get_apply_button().click()
+        if dont_run:
+            p.browser.refresh()
 
     def get_statistics(self):
         """
