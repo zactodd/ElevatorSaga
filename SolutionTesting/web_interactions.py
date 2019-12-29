@@ -2,6 +2,7 @@ import sys
 import os
 from selenium import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
+from selenium.common.exceptions import NoSuchElementException
 
 
 def get_chrome_driver():
@@ -136,6 +137,28 @@ class Page:
         """
         state_container = self.browser.find_element_by_class_name("statscontainer")
         keys = state_container.find_elements_by_class_name("key")
-        values = state_container.find_elements_by_css_selector("span[class^=\"value\"]")
+        values = state_container.find_elements_by_css_selector("span[class^='value']")
         return {k.text: v.text for k, v in zip(keys, values)}
+
+    def level_feedback(self):
+        """
+        Gets the feedback from the level.
+        :return: returns the values of the feedback if it exists otherwise none.
+        """
+        try:
+            feedback = self.browser.\
+                find_element_by_xpath("//div[@class='feedback']/h2[@class='emphasis-color']").text
+        except NoSuchElementException() as e:
+            feedback = None
+        return feedback
+
+    def is_level_successes(self):
+        """
+        Returns if the level is successful or not.
+        :return: True or False if the level is finished and has a result otherwise None.
+        """
+        if feedback := self.level_feedback() is None:
+            return None
+        else:
+            return feedback == "Success!"
 
