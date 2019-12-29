@@ -83,7 +83,10 @@ class Page:
         """
         If the level is not running or pause start it.
         """
-        if self.get_start_pause_button().text != "Pause":
+        if self.get_start_pause_button().text == "Start":
+            self.get_start_pause_button().click()
+        elif self.get_start_pause_button().text == "Restart":
+            self.browser.refresh()
             self.get_start_pause_button().click()
 
     def pause(self):
