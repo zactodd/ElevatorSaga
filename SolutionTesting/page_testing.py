@@ -1,6 +1,7 @@
 import time
 from itertools import product
 from SolutionTesting.web_interactions import Page
+from tqdm import tqdm
 
 
 def test_setup(page=Page(), level=None, speed=None, code=None):
@@ -54,7 +55,7 @@ def iterative_test(page, iterations, **kwargs):
     return [(test(page, **kwargs), page.level_feedback()) for i in range(iterations)]
 
 
-def hyperparameter_test(iterations, levels, speeds, programs, **kwargs):
+def hyperparameter_test(page, iterations, levels, speeds, programs, **kwargs):
     """
     Hyperparameter testing.
     :param iterations: The number test per product of parameter.
@@ -65,7 +66,7 @@ def hyperparameter_test(iterations, levels, speeds, programs, **kwargs):
     :return: A dictionary of the product of parameter to the results of that test.
     """
     results = {}
-    for l, s, p in product(levels, speeds, programs):
-        page = test_setup(level=l, speed=s, code=p)
+    for l, s, p in tqdm(product(levels, speeds, programs)):
+        page = test_setup(page, l, s, p)
         results[(l, s, p)] = iterative_test(page, iterations, **kwargs)
     return results
