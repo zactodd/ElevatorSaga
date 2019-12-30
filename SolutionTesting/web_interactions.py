@@ -32,6 +32,7 @@ class Page:
         self.level = 1
         self.speeds = [1, 2, 3, 5, 8, 13, 21, 34, 55]
         self.browser = self._browser_initialise(browser)
+        self.code = None
 
     @staticmethod
     def _browser_initialise(browser):
@@ -64,6 +65,7 @@ class Page:
         """
         assert 0 < level <= 19, "Level need to be between 1 and 19."
         self.browser.get(URL + LEVEL_FORMAT.format(level))
+        self.level = level
 
     def get_start_pause_button(self):
         """
@@ -126,6 +128,7 @@ class Page:
         with open(js_file, "r") as js:
             code = "".join(js.readlines()).replace("\n", "\\n")
         self.browser.execute_script(code_mirror_set_js.format(code))
+        self.code = js_file
 
     def apply(self, dont_run=True):
         """
