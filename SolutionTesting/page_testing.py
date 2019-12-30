@@ -1,4 +1,5 @@
 import time
+from itertools import product
 from SolutionTesting.web_interactions import Page
 
 
@@ -11,12 +12,12 @@ def test_setup(page=Page(), level=None, speed=None, code=None):
     :param code: The code to test on.
     :return: The Page post setup.
     """
-    if level is not None:
+    if level is not None and page.level != level:
         page.update_level(level)
-    if speed is not None:
+    if speed is not None and page.get_speed() != speed:
         page.set_speed(speed)
-        time.sleep(3)
-    if code is not None:
+        time.sleep(1)
+    if code is not None and (page.code is None or page.code != code):
         page.insert_code(code)
         time.sleep(1)
         page.apply()
@@ -51,3 +52,20 @@ def iterative_test(page, iterations, **kwargs):
     :return: A result with a tuple per iterations with if the level was successful and the related stats.
     """
     return [(test(page, **kwargs), page.level_feedback()) for i in range(iterations)]
+
+
+def hyperparameter_test(iterations, levels, speeds, programs, **kwargs):
+    """
+    Hyperparameter testing.
+    :param iterations: The number test per product of parameter.
+    :param levels: A list of levels to be tested.
+    :param speeds: A list of seeds to be tested.
+    :param programs: A list of levels to be programs.
+    :param kwargs: The kwargs relevant to the test.
+    :return: A dictionary of the product of parameter to the results of that test.
+    """
+    results = {}
+    for l, s, p in product(levels, speeds, programs):
+        page = test_setup(level=l, speed=s, code=p)
+        results[(l, s, p)] = iterative_test(page, iterations, **kwargs)
+    return results
