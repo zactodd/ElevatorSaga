@@ -134,7 +134,7 @@ class Page:
         """
         self.get_apply_button().click()
         if dont_run:
-            p.browser.refresh()
+            self.browser.refresh()
 
     def get_statistics(self):
         """
@@ -154,17 +154,10 @@ class Page:
         try:
             feedback = self.browser.\
                 find_element_by_xpath("//div[@class='feedback']/h2[@class='emphasis-color']").text
-        except NoSuchElementException() as e:
+        except Exception as e:
+            if type(e) != NoSuchElementException:
+                raise e
             feedback = None
         return feedback
 
-    def is_level_successes(self):
-        """
-        Returns if the level is successful or not.
-        :return: True or False if the level is finished and has a result otherwise None.
-        """
-        if feedback := self.level_feedback() is None:
-            return None
-        else:
-            return feedback == "Success!"
 
