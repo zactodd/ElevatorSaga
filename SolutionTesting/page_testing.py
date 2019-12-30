@@ -1,4 +1,4 @@
-from time import sleep
+import time
 from SolutionTesting.web_interactions import Page
 
 
@@ -15,8 +15,39 @@ def test_setup(page=Page(), level=None, speed=None, code=None):
         page.update_level(level)
     if speed is not None:
         page.set_speed(speed)
-        sleep(3)
+        time.sleep(3)
     if code is not None:
         page.insert_code(code)
+        time.sleep(1)
         page.apply()
+        time.sleep(1)
     return page
+
+
+def test(page, get_page_information=lambda page: page.get_statistics(), time_interval=0.5):
+    """
+    Tests a page.
+    :param page: The page to be tested.
+    :param get_page_information: The information to extract from the page base statistics by default.
+    :param time_interval: The time interval to record the data at.
+    :return: A dictionary of the page information at the given time intervals i.e.:
+        {..., time_interval : get_page_information(page),  ... }
+    """
+    time.sleep(1)
+    page.start()
+    results = {}
+    while page.level_feedback() is None:
+        results[time.time()] = get_page_information(page)
+        time.sleep(time_interval)
+    return results
+
+
+def iterative_test(page, iterations, **kwargs):
+    """
+    Runs several level test on a given page.
+    :param page: The page to be tested.
+    :param iterations: The number of tests to be run.
+    :param kwargs: The kwargs relevant to the test.
+    :return: A result with a tuple per iterations with if the level was successful and the related stats.
+    """
+    return [(test(page, **kwargs), page.level_feedback()) for i in range(iterations)]
