@@ -52,7 +52,7 @@ def iterative_test(page, iterations, **kwargs):
     :param kwargs: The kwargs relevant to the test.
     :return: A result with a tuple per iterations with if the level was successful and the related stats.
     """
-    return [(test(page, **kwargs), page.level_feedback()) for i in range(iterations)]
+    return [(test(page, **kwargs), page.level_feedback()) for _ in range(iterations)]
 
 
 def hyperparameter_test(page, iterations, levels, speeds, programs, **kwargs):

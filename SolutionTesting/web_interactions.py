@@ -3,7 +3,6 @@ from selenium.common.exceptions import NoSuchElementException
 
 DRIVER = get_chrome_driver()
 URL = "https://play.elevatorsaga.com/"
-LEVEL_FORMAT = "#challenge={}"
 
 
 class Page:
@@ -43,7 +42,7 @@ class Page:
         :param level: An integer [1, 19] (19 being a sandbox) representing the level..
         """
         assert 0 < level <= 19, "Level need to be between 1 and 19."
-        self.browser.get(URL + LEVEL_FORMAT.format(level))
+        self.browser.get(URL + f"#challenge={level}")
         self.level = level
 
     def get_start_pause_button(self):
